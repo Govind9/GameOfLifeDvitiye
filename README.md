@@ -1,2 +1,2 @@
 # GameOfLifeDvitiye
-Billion dollar idea.
+[Play Here](https://govind9.github.io/GameOfLifeDvitiye/)
