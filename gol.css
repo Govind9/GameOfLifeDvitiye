@@ -1,0 +1,24 @@
+.reddot {background-color:#ff0000 !important;}
+.bluedot {background-color:#0000ff !important;}
+.sblock {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+}
+.block {
+    width: 75%;
+    height: 75%;
+    border-radius: 100%;
+}
+.table {
+    height:400px; 
+    width:400px; 
+    border-style: solid none solid solid;
+}
+.tcell {
+    background-color:grey;
+    height: 22px;
+    width: 22px;
+    border-style: solid none solid solid;
+}
