@@ -1,8 +1,10 @@
 cc = 0;
 dim = 8;
 grid = null;
+prev = null;
 
 function create_grid() {
+
     for (var i=0; i<dim; i++) {
         var row = $("<tr id=" + i + "></tr>");
         for (var j=0; j<dim; j++) {
@@ -34,6 +36,13 @@ function initialize_grid() {
     update_cell(dim-2, 0, "red");
     update_cell(dim-1, 1, "red");
     update_cell(dim-2, 1, "red");
+
+    parse_grid();
+    prev = JSON.stringify(grid);
+
+    update_score();
+
+    //$('#undo_button').click(false);
 }
 
 function parse_grid () {
@@ -162,14 +171,31 @@ function grow_grid(i, j) {
 
 function render_grid() {
     for (var i=0; i<dim; i++) {
-        var row = $("<tr id=" + i + "></tr>");
         for (var j=0; j<dim; j++) {
-            var cell = $("<td id=" + i + "_" + j +"></td>").addClass("tcell");
-            row.append(cell);
+            update_cell(i, j, grid[i][j]);
         }
-        $('tbody').append(row);
     }
+    cc--;
+    border_color = globalThis.cc % 2 == 0 ? 'border_red' : 'border_blue';
+    $('td').each(function() {$(this).removeClass(border_color)});
+    border_color = globalThis.cc % 2 == 0 ? 'border_blue' : 'border_red';
+    $('td').each(function() {$(this).addClass(border_color)});
 }
+
+function update_score() {
+    var count = grid.flatMap((a) => a).reduce((a, b) => { a[b] =a[b] +1; return a;}, {"blue": 0, "red": 0, "empty": 0});
+    var bc = document.getElementById("bc")
+    var rc = document.getElementById("rc")
+    bc.innerText = count.blue;
+    rc.innerText = count.red;
+}
+
+$('#undo_button').click(() => {
+    grid = JSON.parse(prev);
+    render_grid();
+    update_score();
+    //$('#undo_button').click(false);
+})
 
 create_grid();
 initialize_grid();
@@ -177,7 +203,8 @@ initialize_grid();
 $('td').click(function(event) {
     if ($(this).find("div").length) 
         return;
-    
+    //$('#undo_button').click("true");
+    prev = JSON.stringify(grid);
     globalThis.cc += 1;
     id = event.target.id;
     i = parseInt(id.split("_")[0]);
@@ -185,6 +212,8 @@ $('td').click(function(event) {
     var color = globalThis.cc % 2 == 0 ? 'red' : 'blue';
     update_cell(i, j, color);
     parse_grid();
+    update_score();
+    
     grow_grid(i, j);
 
     /*

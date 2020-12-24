@@ -36,3 +36,6 @@
 .border_blue {
     border-color: blue;
 }
+.undo_button {
+    cursor: pointer;
+}
