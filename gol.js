@@ -1,5 +1,5 @@
 cc = 0;
-dim = 10;
+dim = 8;
 grid = null;
 
 function create_grid() {
@@ -11,6 +11,29 @@ function create_grid() {
         }
         $('tbody').append(row);
     }
+    $('td').each(function() {$(this).addClass('border_blue')});
+}
+
+function initialize_grid() {
+    update_cell(0, 0, "blue");
+    update_cell(0, 1, "blue");
+    update_cell(1, 0, "blue");
+    update_cell(1, 1, "blue");
+
+    update_cell(dim-1, dim-1, "blue");
+    update_cell(dim-1, dim-2, "blue");
+    update_cell(dim-2, dim-1, "blue");
+    update_cell(dim-2, dim-2, "blue");
+
+    update_cell(0, dim-1, "red");
+    update_cell(0, dim-2, "red");
+    update_cell(1, dim-1, "red");
+    update_cell(1, dim-2, "red");
+
+    update_cell(dim-1, 0, "red");
+    update_cell(dim-2, 0, "red");
+    update_cell(dim-1, 1, "red");
+    update_cell(dim-2, 1, "red");
 }
 
 function parse_grid () {
@@ -81,17 +104,18 @@ function grow_grid_gol() {
     grid = ng;
 }
 
-function update_cell(x, y, color) {
-    //console.log("Updating cell x: " + x + " and y: " + y);
+function update_cell(x, y, color, size='block') {
+    //console.log("Updating cell x: " + x + " and y: " + y + " with: " + color);
     var cell = document.getElementById(x + "_" + y);
     if (cell.hasChildNodes())
         cell.removeChild(cell.children[0]);
-    if (color == "red" || color == "blue") {
-        var cstyle = color == "red" ? 'reddot' : 'bluedot';
+    if (color != "empty") {
+        var cstyle = color + "dot";
         var sblk = $("<div></div>").addClass("sblock");
-        var blk = $("<div></div>").addClass("block");
+        var blk = $("<div></div>").addClass(size);
         blk.addClass(cstyle);
-        cell.append(sblk.append(blk))
+        sblk.append(blk);
+        cell.append(sblk[0]);
     }
 }
 
@@ -107,15 +131,15 @@ function grow_grid(i, j) {
         [i + 1, j - 1],
         [i + 1, j + 1]
     ];
-    console.log("Candidate Neighbours: " + JSON.stringify(neihbours));
+    //console.log("Candidate Neighbours: " + JSON.stringify(neihbours));
     for (var ii in neihbours) {
         var x = neihbours[ii][0];
         var y = neihbours[ii][1];
         if (x < 0 || y < 0 || x >= dim || y >= dim)
             continue;
-        console.log("Doing neighbour: " + x + " and " + y);
+        //console.log("Doing neighbour: " + x + " and " + y);
         var ret = count_neighbours(x, y);
-        console.log("counted neighbour: " + x + " and " + y);
+        //console.log("counted neighbour: " + x + " and " + y);
         var nc = ret[0];
         var majority = ret[1];
         if (grid[x][y] == "empty") {
@@ -131,7 +155,7 @@ function grow_grid(i, j) {
                 ng[x][y] = grid[x][y];
         }
         update_cell(x, y, ng[x][y]);
-        console.log("Done neighbour: " + x + " and " + y);
+        //console.log("Done neighbour: " + x + " and " + y);
     }
     grid = JSON.parse(JSON.stringify(ng));
 }
@@ -148,27 +172,40 @@ function render_grid() {
 }
 
 create_grid();
+initialize_grid();
 
 $('td').click(function(event) {
     if ($(this).find("div").length) 
         return;
     
     globalThis.cc += 1;
-    color = globalThis.cc % 2 == 0 ? 'reddot' : 'bluedot';
-
-    var sblk = $("<div></div>").addClass("sblock");
-    var blk = $("<div></div>").addClass("block");
-    
-    blk.addClass(color);
-    $(this).append(sblk.append(blk));
     id = event.target.id;
     i = parseInt(id.split("_")[0]);
     j = parseInt(id.split("_")[1]);
-    console.log("Clicked on i: " + i + ", j: " + j);
+    var color = globalThis.cc % 2 == 0 ? 'red' : 'blue';
+    update_cell(i, j, color);
     parse_grid();
-    //sleep for some time.
-    //make graphic to show changes
     grow_grid(i, j);
-    //render_grid();
+
+    /*
+    var timeout = 1000;
+    setTimeout(function() {
+        update_cell(i, j, "gold", "big_block");
+    }, timeout);
+
+    setTimeout(function() {
+        update_cell(i, j, color);
+        parse_grid();
+    }, timeout);
+
+    setTimeout(function() {
+        grow_grid(i, j);
+    }, timeout);
+    */
+
+    border_color = globalThis.cc % 2 == 0 ? 'border_red' : 'border_blue';
+    $('td').each(function() {$(this).removeClass(border_color)});
+    border_color = globalThis.cc % 2 == 0 ? 'border_blue' : 'border_red';
+    $('td').each(function() {$(this).addClass(border_color)});
 });
 

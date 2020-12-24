@@ -1,5 +1,6 @@
 .reddot {background-color:#ff0000 !important;}
 .bluedot {background-color:#0000ff !important;}
+.golddot {background-color:#ffff00 !important;}
 .sblock {
     width: 100%;
     height: 100%;
@@ -9,6 +10,11 @@
 .block {
     width: 75%;
     height: 75%;
+    border-radius: 100%;
+}
+.big_block {
+    width: 120%;
+    height: 120%;
     border-radius: 100%;
 }
 .table {
@@ -21,4 +27,12 @@
     height: 22px;
     width: 22px;
     border-style: solid none solid solid;
+}
+
+.border_red {
+    border-color: red;
+}
+
+.border_blue {
+    border-color: blue;
 }
