@@ -212,9 +212,8 @@ $('td').click(function(event) {
     var color = globalThis.cc % 2 == 0 ? 'red' : 'blue';
     update_cell(i, j, color);
     parse_grid();
-    update_score();
-    
     grow_grid(i, j);
+    update_score();
 
     /*
     var timeout = 1000;
