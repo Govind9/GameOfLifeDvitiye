@@ -31,8 +31,8 @@ function parse_grid () {
 }
 
 function count_neighbours(i, j) {
-    count = {"blue": 0, "red": 0, "empty": 0};
-    neihbours = [
+    var count = {"blue": 0, "red": 0, "empty": 0};
+    var neihbours = [
         [i, j - 1],
         [i, j + 1],
         [i - 1, j],
@@ -42,15 +42,18 @@ function count_neighbours(i, j) {
         [i + 1, j - 1],
         [i + 1, j + 1]
     ];
-    for (var i in neihbours) {
-        x = neihbours[i][0];
-        y = neihbours[i][1];
+    //console.log("Neighbours: " + JSON.stringify(neihbours));
+    for (var ii in neihbours) {
+        var x = neihbours[ii][0];
+        var y = neihbours[ii][1];
         if (x < 0 || y < 0 || x >= dim || y >= dim)
             continue;
+        //console.log("Doing neighbours: " + x + " and " + y);
         count[grid[x][y]]++;
     }
-    majority = count["blue"] > count["red"] ? "blue" : "red";
-    nc = count["blue"] + count["red"]
+    var majority = count["blue"] > count["red"] ? "blue" : "red";
+    var nc = count["blue"] + count["red"]
+    //console.log("Counting neighbours done");
     return [nc, majority]
 }
 
@@ -78,6 +81,61 @@ function grow_grid_gol() {
     grid = ng;
 }
 
+function update_cell(x, y, color) {
+    //console.log("Updating cell x: " + x + " and y: " + y);
+    var cell = document.getElementById(x + "_" + y);
+    if (cell.hasChildNodes())
+        cell.removeChild(cell.children[0]);
+    if (color == "red" || color == "blue") {
+        var cstyle = color == "red" ? 'reddot' : 'bluedot';
+        var sblk = $("<div></div>").addClass("sblock");
+        var blk = $("<div></div>").addClass("block");
+        blk.addClass(cstyle);
+        cell.append(sblk.append(blk))
+    }
+}
+
+function grow_grid(i, j) {
+    var ng = JSON.parse(JSON.stringify(grid));
+    var neihbours = [
+        [i, j - 1],
+        [i, j + 1],
+        [i - 1, j],
+        [i - 1, j - 1],
+        [i - 1, j + 1],
+        [i + 1, j],
+        [i + 1, j - 1],
+        [i + 1, j + 1]
+    ];
+    console.log("Candidate Neighbours: " + JSON.stringify(neihbours));
+    for (var ii in neihbours) {
+        var x = neihbours[ii][0];
+        var y = neihbours[ii][1];
+        if (x < 0 || y < 0 || x >= dim || y >= dim)
+            continue;
+        console.log("Doing neighbour: " + x + " and " + y);
+        var ret = count_neighbours(x, y);
+        console.log("counted neighbour: " + x + " and " + y);
+        var nc = ret[0];
+        var majority = ret[1];
+        if (grid[x][y] == "empty") {
+            if (nc == 3)
+                ng[x][y] = majority;
+            else
+                ng[x][y] = "empty";
+        }
+        else {
+            if (nc < 2 || nc > 3)
+                ng[x][y] = "empty";
+            else
+                ng[x][y] = grid[x][y];
+        }
+        update_cell(x, y, ng[x][y]);
+        console.log("Done neighbour: " + x + " and " + y);
+    }
+    grid = JSON.parse(JSON.stringify(ng));
+}
+
 function render_grid() {
     for (var i=0; i<dim; i++) {
         var row = $("<tr id=" + i + "></tr>");
@@ -89,10 +147,9 @@ function render_grid() {
     }
 }
 
-
 create_grid();
 
-$('td').click(function() {
+$('td').click(function(event) {
     if ($(this).find("div").length) 
         return;
     
@@ -104,8 +161,14 @@ $('td').click(function() {
     
     blk.addClass(color);
     $(this).append(sblk.append(blk));
+    id = event.target.id;
+    i = parseInt(id.split("_")[0]);
+    j = parseInt(id.split("_")[1]);
+    console.log("Clicked on i: " + i + ", j: " + j);
     parse_grid();
-    grow_grid_gol();
-    render_grid();
+    //sleep for some time.
+    //make graphic to show changes
+    grow_grid(i, j);
+    //render_grid();
 });
 
