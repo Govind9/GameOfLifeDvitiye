@@ -4,7 +4,7 @@
         Game of Life
     </title> 
         
-    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script> 
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"> </script>
     <link rel="stylesheet" href="gol.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
@@ -12,7 +12,8 @@
 </head> 
 <body>
 <div style="display:grid; grid-template-columns:1; place-items:center;height:10%">
-    <h1>Game of Life Dvitiye!</h1>
+    <h1 style="background-color:blue; color:white; display:block; width:30%; text-align: center">
+        Game of Life Dvitiye!</h1>
 </div>
 <div style="display:grid; grid-template-columns:1; place-items:center;height:2%">
 <div>
@@ -32,6 +33,13 @@
     </tbody>
 </table>
 </div>
+<div  style="display:grid;place-items:center;">
+    <button style="background-color:blue; color:white; display:block; width:30%;" onclick="game_desc()">
+        Play by Rules
+     </button>
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="confetti.js"></script>
 <script src="gol.js"></script>
 </body>
 </html>

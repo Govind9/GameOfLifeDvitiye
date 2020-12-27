@@ -1,5 +1,6 @@
 cc = 0;
 dim = 8;
+winning_score = 20;
 grid = null;
 prev = null;
 
@@ -188,6 +189,38 @@ function update_score() {
     var rc = document.getElementById("rc")
     bc.innerText = count.blue;
     rc.innerText = count.red;
+    if(count.blue >= winning_score ) {
+         on_winning("Blue");
+    } else if (count.red >= winning_score ) {
+        on_winning("Red");
+    }
+    
+}
+
+function on_winning(winner) {
+    confetti.start(2000);
+        swal(winner +" Won the Game!", {
+            buttons: {
+                playAgain : "Play Again!",
+                share: "Share",
+            }
+        })
+        .then((value) => {
+            switch (value) {
+                case "playAgain":
+                    swal("Do reset!", "Do Whatever!");
+                    //
+                break;
+                case "share":
+                    swal("Do whatever!", "Do Whatever!");
+                    //
+                break;
+            }
+        });
+}
+
+function game_desc(){
+    swal("Rules/ description", "Game of Life Dvitiye, Do Whatever!");
 }
 
 $('#undo_button').click(() => {
