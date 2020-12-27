@@ -1,6 +1,6 @@
 cc = 0;
 dim = 8;
-winning_score = 20;
+winning_score = 10;
 grid = null;
 prev = null;
 
@@ -18,6 +18,18 @@ function create_grid() {
 }
 
 function initialize_grid() {
+    cc = 0;
+    border_color = cc % 2 == 0 ? 'border_red' : 'border_blue';
+    $('td').each(function() {$(this).removeClass(border_color)});
+    border_color = cc % 2 == 0 ? 'border_blue' : 'border_red';
+    $('td').each(function() {$(this).addClass(border_color)});
+    // wipe out dots
+    for (var i=0; i<dim; i++) {
+        for (var j=0; j<dim; j++) {
+            update_cell(i, j, "empty");
+        }
+    }
+    // put initial dots
     update_cell(0, 0, "blue");
     update_cell(0, 1, "blue");
     update_cell(1, 0, "blue");
@@ -90,30 +102,6 @@ function count_neighbours(i, j) {
     return [nc, majority]
 }
 
-function grow_grid_gol() {
-    ng = [];
-    for (var i=0; i<dim; i++) {
-        for (var j=0; j<dim; j++) {
-            ret = count_neighbours(i, j);
-            nc = ret[0];
-            majority = ret[1];
-            if (grid[i][j] == "empty") {
-                if (nc == 3)
-                    ng[i][j] = majority;
-                else
-                    ng[i][j] = "empty";
-            }
-            else {
-                if (nc < 2 || nc > 3)
-                    ng[i][j] = "empty";
-                else
-                    ng[i][j] = grid[i][j];
-            }
-        }
-    }
-    grid = ng;
-}
-
 function update_cell(x, y, color, size='block') {
     //console.log("Updating cell x: " + x + " and y: " + y + " with: " + color);
     var cell = document.getElementById(x + "_" + y);
@@ -170,7 +158,7 @@ function grow_grid(i, j) {
     grid = JSON.parse(JSON.stringify(ng));
 }
 
-function render_grid() {
+function undo_grid() {
     for (var i=0; i<dim; i++) {
         for (var j=0; j<dim; j++) {
             update_cell(i, j, grid[i][j]);
@@ -181,6 +169,8 @@ function render_grid() {
     $('td').each(function() {$(this).removeClass(border_color)});
     border_color = globalThis.cc % 2 == 0 ? 'border_blue' : 'border_red';
     $('td').each(function() {$(this).addClass(border_color)});
+
+    update_score();
 }
 
 function update_score() {
@@ -189,12 +179,11 @@ function update_score() {
     var rc = document.getElementById("rc")
     bc.innerText = count.blue;
     rc.innerText = count.red;
-    if(count.blue >= winning_score ) {
+
+    if(count.blue >= winning_score)
          on_winning("Blue");
-    } else if (count.red >= winning_score ) {
+    else if (count.red >= winning_score)
         on_winning("Red");
-    }
-    
 }
 
 function on_winning(winner) {
@@ -208,11 +197,12 @@ function on_winning(winner) {
         .then((value) => {
             switch (value) {
                 case "playAgain":
-                    swal("Do reset!", "Do Whatever!");
+                    initialize_grid();
                     //
                 break;
                 case "share":
-                    swal("Do whatever!", "Do Whatever!");
+                    swal("This game is stupid!", "Don't Share it!");
+                    initialize_grid();
                     //
                 break;
             }
@@ -220,13 +210,18 @@ function on_winning(winner) {
 }
 
 function game_desc(){
-    swal("Rules/ description", "Game of Life Dvitiye, Do Whatever!");
+    var src = "rules.png";
+    swal({
+        title: "Hello World",
+        text: "ehehe",
+        imageUrl: "rules.png"
+     });
+    //swal("Rules/ description", "Game of Life Dvitiye, Do Whatever!");
 }
 
 $('#undo_button').click(() => {
     grid = JSON.parse(prev);
-    render_grid();
-    update_score();
+    undo_grid();
     //$('#undo_button').click(false);
 })
 
