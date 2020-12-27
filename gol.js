@@ -1,6 +1,6 @@
 cc = 0;
 dim = 8;
-winning_score = 10;
+winning_score = 20;
 grid = null;
 prev = null;
 
